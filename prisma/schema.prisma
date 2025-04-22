@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,28 +14,66 @@ datasource db {
 }
 
 model News {
-  id          Int    @id @default(autoincrement())
-  mainImage   String
-  title       String
-  description String
-  alias       String
-  content     String
-  createdAt   DateTime @default(now())
+  id          Int      @id @default(autoincrement()) // ID của bài viết
+  title       String // Tiêu đề
+  description String // Mô tả ngắn
+  alias       String   @unique // Alias cho SEO
+  content     String // Nội dung bài viết
+  mainImage   String // URL hình ảnh chính
+  createdAt   DateTime @default(now()) // Thời gian tạo
+  updatedAt   DateTime @updatedAt // Thời gian cập nhật
+}
+
+model Page {
+  id          Int      @id @default(autoincrement()) // ID của bài viết
+  title       String // Tiêu đề
+  description String // Mô tả ngắn
+  alias       String   @unique // Alias cho SEO
+  content     String // Nội dung bài viết
+  mainImage   String // URL hình ảnh chính
+  createdAt   DateTime @default(now()) // Thời gian tạo
+  updatedAt   DateTime @updatedAt // Thời gian cập nhật
+}
+
+model Activity {
+  id          Int      @id @default(autoincrement()) // ID của hoạt động
+  title       String // Tiêu đề hoạt động
+  description String // Mô tả hoạt động
+  alias       String   @unique // Alias cho SEO
+  content     String // Nội dung hoạt động
+  mainImage   String // URL hình ảnh chính
+  createdAt   DateTime @default(now()) // Thời gian tạo
+  updatedAt   DateTime @updatedAt // Thời gian cập nhật
 }
 
 model Member {
-  id           Int    @id @default(autoincrement())
-  avatar       String
-  name         String
-  description  String
-  displayOrder Int
-  createdAt    DateTime @default(now())
+  id           Int      @id @default(autoincrement()) // ID của thành viên
+  avatar       String // URL ảnh đại diện
+  name         String // Tên thành viên
+  description  String // Mô tả về thành viên
+  displayOrder Int // Thứ tự hiển thị
+  createdAt    DateTime @default(now()) // Thời gian tạo
+  updatedAt    DateTime @updatedAt // Thời gian cập nhật
+}
+
+model Album {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  path        String?
+  type        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  libraries Library[] @relation("AlbumLibraries")
 }
 
 model Library {
-  id          Int    @id @default(autoincrement())
-  albumType   String
-  title       String
-  description String
-  createdAt   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  albumId   Int
+  path      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  album Album @relation("AlbumLibraries", fields: [albumId], references: [id])
 }
