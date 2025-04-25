@@ -30,4 +30,8 @@ export class UploadService {
     const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
     return { url };
   }
+
+  async uploadMultipleFiles(files: Express.Multer.File[]) {
+    return Promise.all(files.map(file => this.uploadFile(file)));
+  }
 }
