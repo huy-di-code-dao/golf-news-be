@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Query } from '@nestjs/common';
 import { NewsService } from './news.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CreateNewsDto } from './dto/create-news.dto';
@@ -21,8 +21,8 @@ export class NewsController {
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách tất cả bài viết' })
   @ApiResponse({ status: 200, description: 'Danh sách bài viết', type: [CreateNewsDto] })
-  findAll(): Promise<News[]> {
-    return this.newsService.findAll();
+  findAll(@Query() query: any) {
+    return this.newsService.findAll(query);
   }
 
   @Get(':id')
