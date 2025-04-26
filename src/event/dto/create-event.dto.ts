@@ -8,6 +8,9 @@ export class CreateActivityDto extends BaseDto {
     @IsString()
     title?: string;
 
+    @ApiProperty({ example: 1 })
+    id: number;
+
     @ApiProperty({ example: 'Mô tả hoạt động', required: false })
     @IsOptional()
     @IsString()

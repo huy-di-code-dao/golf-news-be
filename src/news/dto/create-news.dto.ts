@@ -12,6 +12,9 @@ export class CreateNewsDto extends BaseDto {
   @IsString()
   description?: string;
 
+  @ApiProperty({ example: 1 })
+  id: number;
+
   @ApiPropertyOptional({ description: 'Đường dẫn (alias) thân thiện với SEO' })
   @IsOptional()
   @IsString()

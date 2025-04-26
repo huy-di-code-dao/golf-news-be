@@ -35,4 +35,7 @@ export class CreatePageDto extends BaseDto {
   @IsString()
   @IsOptional()
   mainImage?: string;
+
+  @ApiProperty({ example: 1 })
+  id: number;
 }

@@ -35,4 +35,7 @@ export class CreateAlbumDto {
   @IsArray()
   @IsString({ each: true })
   images?: string[];
+
+  @ApiProperty({ example: 1 })
+  id: number;
 }
