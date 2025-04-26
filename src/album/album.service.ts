@@ -19,12 +19,8 @@ export class AlbumService {
     });
   }
 
-  async findAll(language?: string, keyword?: string) {
+  async findAll(keyword?: string) {
     const where: any = {};
-
-    if (language) {
-      where.language = language;
-    }
 
     if (keyword) {
       where.OR = [
@@ -45,12 +41,8 @@ export class AlbumService {
     }));
   }
 
-  async findAllAdmin(language?: string, keyword?: string) {
+  async findAllAdmin(keyword?: string) {
     const where: any = {};
-
-    if (language) {
-      where.language = language;
-    }
 
     if (keyword) {
       where.OR = [

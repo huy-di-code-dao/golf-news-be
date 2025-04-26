@@ -18,19 +18,17 @@ export class AlbumController {
   @Get()
   @ApiOperation({ summary: 'Danh sách album' })
   findAll(
-    @Query('language') language?: string,
     @Query('keyword') keyword?: string,
   ) {
-    return this.albumService.findAll(language, keyword);
+    return this.albumService.findAll(keyword);
   }
 
   @Get('admin')
   @ApiOperation({ summary: 'Danh sách album' })
   findAllAdmin(
-    @Query('language') language?: string,
     @Query('keyword') keyword?: string,
   ) {
-    return this.albumService.findAllAdmin(language, keyword);
+    return this.albumService.findAllAdmin(keyword);
   }
 
   @Get(':id')

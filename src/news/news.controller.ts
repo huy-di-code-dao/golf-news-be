@@ -4,6 +4,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/s
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
 import { News } from '@prisma/client';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @ApiTags('News')
 @Controller('news')
@@ -21,7 +22,7 @@ export class NewsController {
   @Get()
   @ApiOperation({ summary: 'Lấy danh sách tất cả bài viết' })
   @ApiResponse({ status: 200, description: 'Danh sách bài viết', type: [CreateNewsDto] })
-  findAll(@Query() query: any) {
+  findAll(@Query() query: QueryDto) {
     return this.newsService.findAll(query);
   }
 
@@ -29,7 +30,7 @@ export class NewsController {
   @Get('admin')
   @ApiOperation({ summary: 'Lấy danh sách tất cả bài viết by admin' })
   @ApiResponse({ status: 200, description: 'Danh sách bài viết', type: [CreateNewsDto] })
-  findAllAdmin(@Query() query: any) {
+  findAllAdmin(@Query() query: QueryDto) {
     return this.newsService.findAllAdmin(query);
   }
 

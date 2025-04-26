@@ -4,6 +4,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/s
 import { CreateActivityDto } from './dto/create-event.dto';
 import { UpdateActivityDto } from './dto/update-event.dto';
 import { Event } from '@prisma/client';
+import { QueryDto } from 'src/common/dto/query.dto';
 
 @ApiTags('Activity')
 @Controller('activities')
@@ -21,14 +22,14 @@ export class EventController {
   @Get()
   @ApiOperation({ summary: 'Lấy tất cả hoạt động' })
   @ApiResponse({ status: 200, description: 'Danh sách hoạt động', type: [CreateActivityDto] })
-  findAll(@Query() query: any) {
+  findAll(@Query() query: QueryDto) {
     return this.eventService.findAll(query);
   }
 
   @Get('admin')
   @ApiOperation({ summary: 'Lấy tất cả hoạt động by admin' })
   @ApiResponse({ status: 200, description: 'Danh sách hoạt động', type: [CreateActivityDto] })
-  findAllTour(@Query() query: any) {
+  findAllTour(@Query() query: QueryDto) {
     return this.eventService.findAllAdmin(query);
   }
 
