@@ -16,9 +16,35 @@ export class EventService {
     return await this.prisma.event.create({ data });
   }
 
+  async findAllAdmin(query: any) {
+    const { pagination, filter, language, keyword } =
+      paginationAndFilter(query);
+    const where = {
+      language,
+      OR: [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ],
+    };
+    return this.paginationFilterService.applyPaginationAndFilter({
+      model: this.prisma.event,
+      pagination,
+      filter,
+      where,
+      include: this.include,
+    });
+  }
+
   async findAll(query: any) {
-    const { pagination, filter } = paginationAndFilter(query);
-    const where = {};
+    const { pagination, filter, language, keyword } =
+      paginationAndFilter(query);
+    const where = {
+      language,
+      OR: [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ],
+    };
     return this.paginationFilterService.applyPaginationAndFilter({
       model: this.prisma.event,
       pagination,
@@ -31,6 +57,12 @@ export class EventService {
   async findOne(id: number) {
     return await this.prisma.event.findUnique({
       where: { id },
+    });
+  }
+
+  async findBySlug(slug: string) {
+    return await this.prisma.event.findUnique({
+      where: { alias: slug },
     });
   }
 

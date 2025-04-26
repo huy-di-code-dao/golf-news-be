@@ -1,59 +1,38 @@
-import { IsOptional, IsString, IsArray, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
-export class LibraryInputDto {
-  @ApiPropertyOptional({ example: 1 })
-  @IsOptional()
-  id?: number;
-
-  @ApiPropertyOptional({ example: 'image1.jpg' })
-  @IsOptional()
-  @IsString()
-  path?: string;
-}
+import { IsOptional, IsString, IsArray, IsUrl } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateAlbumDto {
-  @ApiProperty({ example: 'Album A' })
+  @ApiProperty({ example: 'Summer Trip Album', description: 'Tiêu đề của album' })
   @IsString()
   title: string;
 
-  @ApiPropertyOptional({ example: 'Ảnh sinh nhật' })
+  @ApiProperty({ example: 'Album các chuyến đi mùa hè', required: false, description: 'Mô tả ngắn cho album' })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ example: 'folder/album-a/' })
+  @ApiProperty({ example: 'https://domain.com/cover.jpg', required: false, description: 'URL ảnh bìa của album' })
   @IsOptional()
   @IsString()
-  path?: string;
+  coverPhoto?: string;
 
-  @ApiPropertyOptional({ example: 'image' })
-  @IsOptional()
-  @IsString()
-  type?: string;
-
-  @ApiPropertyOptional({
-    type: [LibraryInputDto],
-    example: [
-      { path: 'image1.jpg' },
-      { path: 'image2.jpg' }
-    ],
+  @ApiProperty({ 
+    example: ['https://domain.com/video1.mp4', 'https://domain.com/video2.mp4'], 
+    required: false,
+    description: 'Danh sách URL các video'
   })
   @IsOptional()
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => LibraryInputDto)
-  libraries?: LibraryInputDto[];
-}
+  @IsString({ each: true })
+  videos?: string[];
 
-export class UpdateAlbumDto extends CreateAlbumDto {
-  @ApiPropertyOptional({
-    type: [LibraryInputDto],
-    example: [
-      { id: 1, path: 'image1_updated.jpg' },
-      { path: 'new_image.jpg' }
-    ],
+  @ApiProperty({ 
+    example: ['https://domain.com/image1.jpg', 'https://domain.com/image2.jpg'], 
+    required: false,
+    description: 'Danh sách URL các hình ảnh'
   })
-  libraries?: LibraryInputDto[];
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 }

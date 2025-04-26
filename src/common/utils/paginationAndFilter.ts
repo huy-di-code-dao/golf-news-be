@@ -31,5 +31,7 @@ export const paginationAndFilter = (query: any) => {
     pagination,
     filter,
     searchOne: query.searchOne,
+    keyword: query?.keyword,
+    language: query?.language
   };
 };

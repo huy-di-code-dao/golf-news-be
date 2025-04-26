@@ -13,12 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Language {
+  vi
+  en
+}
+
 model News {
   id          Int       @id @default(autoincrement()) // ID của bài viết
   title       String // Tiêu đề
   description String? // Mô tả ngắn
   alias       String?   @unique // Alias cho SEO
   content     String? // Nội dung bài viết
+  language    Language  @default(vi) // Ngôn ngữ, mặc định là "vi"
   mainImage   String? // URL hình ảnh chính
   createdAt   DateTime? @default(now()) // Thời gian tạo
   updatedAt   DateTime? @updatedAt // Thời gian cập nhật
@@ -42,6 +48,7 @@ model Event {
   description String? // Mô tả hoạt động
   alias       String?   @unique // Alias cho SEO
   content     String? // Nội dung hoạt động
+  language    Language  @default(vi) // Ngôn ngữ, mặc định là "vi"
   mainImage   String? // URL hình ảnh chính
   createdAt   DateTime? @default(now()) // Thời gian tạo
   updatedAt   DateTime? @updatedAt // Thời gian cập nhật
@@ -62,19 +69,8 @@ model Album {
   title       String
   description String?
   coverPhoto  String?
-  type        String?
+  videos      String?
+  images      String?
   createdAt   DateTime? @default(now())
   updatedAt   DateTime? @updatedAt
-
-  libraries Library[] @relation("AlbumLibraries")
-}
-
-model Library {
-  id        Int       @id @default(autoincrement())
-  albumId   Int
-  path      String?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-
-  album Album @relation("AlbumLibraries", fields: [albumId], references: [id], onDelete: Cascade)
 }

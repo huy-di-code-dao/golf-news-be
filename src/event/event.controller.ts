@@ -25,12 +25,25 @@ export class EventController {
     return this.eventService.findAll(query);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Lấy chi tiết hoạt động theo ID' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Chi tiết hoạt động', type: CreateActivityDto })
-  findOne(@Param('id') id: string): Promise<Event> {
-    return this.eventService.findOne(Number(id));
+  @Get('admin')
+  @ApiOperation({ summary: 'Lấy tất cả hoạt động by admin' })
+  @ApiResponse({ status: 200, description: 'Danh sách hoạt động', type: [CreateActivityDto] })
+  findAllTour(@Query() query: any) {
+    return this.eventService.findAllAdmin(query);
+  }
+
+  @Get(':identifier')
+  @ApiOperation({ summary: 'Lấy thông tin bài viết theo ID hoặc slug' })
+  @ApiParam({ name: 'identifier', description: 'ID hoặc slug của bài viết', type: String })
+  findOne(@Param('identifier') identifier: string) {
+    const id = parseInt(identifier, 10);
+  
+    // Nếu là số, tìm theo ID; nếu không, tìm theo slug
+    if (!isNaN(id)) {
+      return this.eventService.findOne(id);
+    } else {
+      return this.eventService.findBySlug(identifier);
+    }
   }
 
   @Put(':id')

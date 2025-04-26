@@ -25,12 +25,26 @@ export class NewsController {
     return this.newsService.findAll(query);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Lấy chi tiết bài viết theo ID' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Chi tiết bài viết', type: CreateNewsDto })
-  findOne(@Param('id') id: string): Promise<News> {
-    return this.newsService.findOne(Number(id));
+  
+  @Get('admin')
+  @ApiOperation({ summary: 'Lấy danh sách tất cả bài viết by admin' })
+  @ApiResponse({ status: 200, description: 'Danh sách bài viết', type: [CreateNewsDto] })
+  findAllAdmin(@Query() query: any) {
+    return this.newsService.findAllAdmin(query);
+  }
+
+  @Get(':identifier')
+  @ApiOperation({ summary: 'Lấy thông tin bài viết theo ID hoặc slug' })
+  @ApiParam({ name: 'identifier', description: 'ID hoặc slug của bài viết', type: String })
+  findOne(@Param('identifier') identifier: string) {
+    const id = parseInt(identifier, 10);
+  
+    // Nếu là số, tìm theo ID; nếu không, tìm theo slug
+    if (!isNaN(id)) {
+      return this.newsService.findOne(id);
+    } else {
+      return this.newsService.findBySlug(identifier);
+    }
   }
 
   @Put(':id')

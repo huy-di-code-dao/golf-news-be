@@ -7,96 +7,96 @@ import { UpdateAlbumDto } from './dto/update-album.dto';
 export class AlbumService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(dto: CreateAlbumDto) {
-    const { libraries, ...albumData } = dto;
-  
-    const album = await this.prisma.album.create({
+  async create(createAlbumDto: CreateAlbumDto) {
+    const { videos, images, ...rest } = createAlbumDto;
+
+    return this.prisma.album.create({
       data: {
-        ...albumData,
-        libraries: libraries
-          ? {
-              create: libraries.map((lib) => ({
-                path: lib.path,
-              })),
-            }
-          : undefined,
-      },
-      include: {
-        libraries: true,
+        ...rest,
+        videos: videos ? JSON.stringify(videos) : undefined,
+        images: images ? JSON.stringify(images) : undefined,
       },
     });
-  
-    return album;
   }
-  
-  async findAll() {
-    return await this.prisma.album.findMany({
-      include: {
-        libraries: true,
-      },
+
+  async findAll(language?: string, keyword?: string) {
+    const where: any = {};
+
+    if (language) {
+      where.language = language;
+    }
+
+    if (keyword) {
+      where.OR = [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ];
+    }
+
+    const albums = await this.prisma.album.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
     });
+
+    return albums.map((album) => ({
+      ...album,
+      videos: album.videos ? JSON.parse(album.videos) : [],
+      images: album.images ? JSON.parse(album.images) : [],
+    }));
+  }
+
+  async findAllAdmin(language?: string, keyword?: string) {
+    const where: any = {};
+
+    if (language) {
+      where.language = language;
+    }
+
+    if (keyword) {
+      where.OR = [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ];
+    }
+
+    const albums = await this.prisma.album.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return albums.map((album) => ({
+      ...album,
+      videos: album.videos ? JSON.parse(album.videos) : [],
+      images: album.images ? JSON.parse(album.images) : [],
+    }));
   }
 
   async findOne(id: number) {
-    return await this.prisma.album.findUnique({
-      where: { id },
-      include: {
-        libraries: true,
-      },
-    });
+    const album = await this.prisma.album.findUnique({ where: { id } });
+
+    if (!album) return null;
+
+    return {
+      ...album,
+      videos: album.videos ? JSON.parse(album.videos) : [],
+      images: album.images ? JSON.parse(album.images) : [],
+    };
   }
 
-  async update(id: number, dto: UpdateAlbumDto) {
-    const { libraries, ...albumData } = dto;
-  
-    // Bước 1: Xóa những Library không còn
-    if (libraries) {
-      const existing = await this.prisma.library.findMany({
-        where: { albumId: id },
-      });
-  
-      const incomingIds = libraries.filter((lib) => lib.id).map((lib) => lib.id);
-      const toDelete = existing.filter((lib) => !incomingIds.includes(lib.id));
-  
-      await this.prisma.library.deleteMany({
-        where: { id: { in: toDelete.map((lib) => lib.id) } },
-      });
-  
-      // Bước 2: Cập nhật hoặc tạo mới
-      for (const lib of libraries) {
-        if (lib.id) {
-          await this.prisma.library.update({
-            where: { id: lib.id },
-            data: {
-              path: lib.path,
-            },
-          });
-        } else {
-          await this.prisma.library.create({
-            data: {
-              path: lib.path,
-              albumId: id,
-            },
-          });
-        }
-      }
-    }
-  
-    // Bước 3: Cập nhật Album chính
-    const album = await this.prisma.album.update({
+  async update(id: number, updateAlbumDto: UpdateAlbumDto) {
+    const { videos, images, ...rest } = updateAlbumDto;
+
+    return this.prisma.album.update({
       where: { id },
-      data: albumData,
-      include: {
-        libraries: true,
+      data: {
+        ...rest,
+        videos: videos ? JSON.stringify(videos) : undefined,
+        images: images ? JSON.stringify(images) : undefined,
       },
     });
-  
-    return album;
   }
 
   async remove(id: number) {
-    return await this.prisma.album.delete({
-      where: { id },
-    });
+    return this.prisma.album.delete({ where: { id } });
   }
 }

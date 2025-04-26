@@ -17,8 +17,34 @@ export class NewsService {
   }
 
   async findAll(query: any) {
-    const { pagination, filter } = paginationAndFilter(query);
-    const where = {};
+    const { pagination, filter, language, keyword } =
+      paginationAndFilter(query);
+    const where = {
+      language,
+      OR: [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ],
+    };
+    return this.paginationFilterService.applyPaginationAndFilter({
+      model: this.prisma.news,
+      pagination,
+      filter,
+      where,
+      include: this.include,
+    });
+  }
+
+  async findAllAdmin(query: any) {
+    const { pagination, filter, language, keyword } =
+      paginationAndFilter(query);
+    const where = {
+      language,
+      OR: [
+        { title: { contains: keyword, mode: 'insensitive' } },
+        { description: { contains: keyword, mode: 'insensitive' } },
+      ],
+    };
     return this.paginationFilterService.applyPaginationAndFilter({
       model: this.prisma.news,
       pagination,
@@ -31,6 +57,12 @@ export class NewsService {
   async findOne(id: number) {
     return await this.prisma.news.findUnique({
       where: { id },
+    });
+  }
+
+  async findBySlug(slug: string) {
+    return await this.prisma.news.findUnique({
+      where: { alias: slug },
     });
   }
 
