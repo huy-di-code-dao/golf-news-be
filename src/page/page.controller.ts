@@ -23,8 +23,8 @@ export class PageController {
   }
   
   @Get(':identifier')
-  @ApiOperation({ summary: 'Lấy thông tin bài viết theo ID hoặc slug' })
-  @ApiParam({ name: 'identifier', description: 'ID hoặc slug của bài viết', type: String })
+  @ApiOperation({ summary: 'Lấy thông tin bài viết theo ID hoặc Alias' })
+  @ApiParam({ name: 'identifier', description: 'ID hoặc Alias của bài viết', type: String })
   findOne(@Param('identifier') identifier: string) {
     const id = parseInt(identifier, 10);
   
