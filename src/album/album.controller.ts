@@ -1,8 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AlbumDto } from 'src/common/dto/query.dto';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('Albums')
 @Controller('albums')
@@ -17,18 +27,14 @@ export class AlbumController {
 
   @Get()
   @ApiOperation({ summary: 'Danh sách album' })
-  findAll(
-    @Query('keyword') keyword?: string,
-  ) {
-    return this.albumService.findAll(keyword);
+  findAll(@Query() query: AlbumDto) {
+    return this.albumService.findAll(query);
   }
 
   @Get('admin')
   @ApiOperation({ summary: 'Danh sách album' })
-  findAllAdmin(
-    @Query('keyword') keyword?: string,
-  ) {
-    return this.albumService.findAllAdmin(keyword);
+  findAllTour(@Query() query: AlbumDto) {
+    return this.albumService.findAllAdmin(query);
   }
 
   @Get(':id')

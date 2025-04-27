@@ -1,6 +1,15 @@
 // src/page/page.controller.ts
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { GetListPagesDto } from 'src/common/dto/list-page.dto';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { PageService } from './page.service';
@@ -21,13 +30,17 @@ export class PageController {
   findAll() {
     return this.pageService.findAll();
   }
-  
+
   @Get(':identifier')
   @ApiOperation({ summary: 'Lấy thông tin bài viết theo ID hoặc Alias' })
-  @ApiParam({ name: 'identifier', description: 'ID hoặc Alias của bài viết', type: String })
+  @ApiParam({
+    name: 'identifier',
+    description: 'ID hoặc Alias của bài viết',
+    type: String,
+  })
   findOne(@Param('identifier') identifier: string) {
     const id = parseInt(identifier, 10);
-  
+
     // Nếu là số, tìm theo ID; nếu không, tìm theo slug
     if (!isNaN(id)) {
       return this.pageService.findOne(id);
@@ -46,5 +59,12 @@ export class PageController {
   @ApiOperation({ summary: 'Xóa bài viết' })
   remove(@Param('id') id: string) {
     return this.pageService.remove(+id);
+  }
+
+  @Post('list-page') // <-- Đổi tên route cho đúng chức năng
+  @ApiOperation({ summary: 'Lấy danh sách thông tin của các page theo alias' })
+  async getPagesProperties(@Body() body: GetListPagesDto) {
+    const { aliases } = body;
+    return await this.pageService.getPagesWithProperties(aliases);
   }
 }

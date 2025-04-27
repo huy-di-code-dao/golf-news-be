@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePageDto } from './dto/create-page.dto';
 import { UpdatePageDto } from './dto/update-page.dto';
 import { Prisma } from '@prisma/client';
@@ -50,5 +50,26 @@ export class PageService {
     return await this.prisma.page.findUnique({
       where: { alias: slug },
     });
+  }
+
+  async getPagesWithProperties(aliases: string[]) {
+    const pages = await this.prisma.page.findMany({
+      where: {
+        alias: {
+          in: aliases,
+        },
+      },
+    });
+  
+    if (!pages.length) {
+      throw new NotFoundException('Không tìm thấy các page yêu cầu');
+    }
+  
+    const totalEvents = await this.prisma.event.count();
+  
+    return {
+      listPage: pages,
+      totalEvents,
+    };
   }
 }

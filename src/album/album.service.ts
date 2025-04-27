@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
+import { PaginationFilterService } from 'src/common/services/pagination-filter.service';
+import { paginationAndFilter } from 'src/common/utils/paginationAndFilter';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
 @Injectable()
 export class AlbumService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private paginationFilterService: PaginationFilterService,
+  ) {}
+  private include = {};
 
   async create(createAlbumDto: CreateAlbumDto) {
     const { videos, images, ...rest } = createAlbumDto;
@@ -19,7 +25,9 @@ export class AlbumService {
     });
   }
 
-  async findAll(keyword?: string) {
+  async findAll(query) {
+    const { pagination, filter, language, keyword } =
+      paginationAndFilter(query);
     const where: any = {};
 
     if (keyword) {
@@ -29,19 +37,26 @@ export class AlbumService {
       ];
     }
 
-    const albums = await this.prisma.album.findMany({
+    const albums = await this.paginationFilterService.applyPaginationAndFilter({
+      model: this.prisma.event,
+      pagination,
+      filter,
       where,
-      orderBy: { createdAt: 'desc' },
+      include: this.include,
     });
 
-    return albums.map((album) => ({
+    albums.data.map((album) => ({
       ...album,
       videos: album.videos ? JSON.parse(album.videos) : [],
       images: album.images ? JSON.parse(album.images) : [],
     }));
+
+    return albums;
   }
 
-  async findAllAdmin(keyword?: string) {
+  async findAllAdmin(query: any) {
+    const { pagination, filter, language, keyword } =
+      paginationAndFilter(query);
     const where: any = {};
 
     if (keyword) {
@@ -51,16 +66,21 @@ export class AlbumService {
       ];
     }
 
-    const albums = await this.prisma.album.findMany({
+    const albums = await this.paginationFilterService.applyPaginationAndFilter({
+      model: this.prisma.event,
+      pagination,
+      filter,
       where,
-      orderBy: { createdAt: 'desc' },
+      include: this.include,
     });
 
-    return albums.map((album) => ({
+    albums.data.map((album) => ({
       ...album,
       videos: album.videos ? JSON.parse(album.videos) : [],
       images: album.images ? JSON.parse(album.images) : [],
     }));
+
+    return albums;
   }
 
   async findOne(id: number) {

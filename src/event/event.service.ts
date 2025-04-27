@@ -19,13 +19,14 @@ export class EventService {
   async findAllAdmin(query: any) {
     const { pagination, filter, language, keyword } =
       paginationAndFilter(query);
-    const where = {
-      language,
-      OR: [
+    const where: any = { language };
+
+    if (keyword) {
+      where.OR = [
         { title: { contains: keyword, mode: 'insensitive' } },
         { description: { contains: keyword, mode: 'insensitive' } },
-      ],
-    };
+      ];
+    }
     return this.paginationFilterService.applyPaginationAndFilter({
       model: this.prisma.event,
       pagination,
@@ -38,13 +39,14 @@ export class EventService {
   async findAll(query: any) {
     const { pagination, filter, language, keyword } =
       paginationAndFilter(query);
-    const where = {
-      language,
-      OR: [
-        { title: { contains: keyword, mode: 'insensitive' } },
-        { description: { contains: keyword, mode: 'insensitive' } },
-      ],
-    };
+      const where: any = { language };
+
+      if (keyword) {
+        where.OR = [
+          { title: { contains: keyword, mode: 'insensitive' } },
+          { description: { contains: keyword, mode: 'insensitive' } },
+        ];
+      }
     return this.paginationFilterService.applyPaginationAndFilter({
       model: this.prisma.event,
       pagination,
